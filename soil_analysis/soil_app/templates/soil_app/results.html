@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Soil Analysis Results</title>
+</head>
+<body>
+    <h1>Soil Analysis Results</h1>
+    <h2>Soil Grade: {{ grade }} (0-2)</h2>
+    
+    <div>
+        {{ graph_html|safe }}
+    </div>
+    
+    <h3>AI Suggestions:</h3>
+    <ul>
+        {% for suggestion in suggestions %}
+            <li>{{ suggestion }}</li>
+        {% endfor %}
+    </ul>
+    
+    <a href="{% url 'upload' %}">Analyze Another Sample</a>
+</body>
+</html>

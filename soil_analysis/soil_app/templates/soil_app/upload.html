@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Soil Analysis</title>
+</head>
+<body>
+    <h1>Upload Soil Data</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Analyze</button>
+    </form>
+</body>
+</html>
