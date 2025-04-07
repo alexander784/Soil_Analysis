@@ -1,23 +1,193 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soil Analysis Results</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f6f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        h1 {
+            font-size: 2em;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+        h2 {
+            font-size: 1.5em;
+        }
+        h3 {
+            font-size: 1.2em;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .content-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .graph-section {
+            margin: 20px 0;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        ul li {
+            padding: 10px;
+            background: #ecf0f1;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+
+        .chat-container {
+            width: 350px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            margin-top: 30px;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+        .chat-header {
+            background: #2c3e50;
+            color: #fff;
+            padding: 12px 15px;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #fafafa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .chat-messages p {
+            margin: 8px 0;
+            padding: 8px 12px;
+            border-radius: 5px;
+            max-width: 80%;
+        }
+        .chat-messages p:nth-child(even) {
+            background: #3498db;
+            color: #fff;
+            margin-left: auto;
+            text-align: right;
+        }
+        .chat-messages p:nth-child(odd) {
+            background: #ecf0f1;
+            color: #333;
+        }
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            background: #fff;
+        }
+        .chat-input input {
+            flex-grow: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px 0 0 5px;
+            outline: none;
+            font-size: 0.9em;
+        }
+        .chat-input button {
+            padding: 8px 15px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        .chat-input button:hover {
+            background: #2980b9;
+        }
+    </style>
 </head>
 <body>
-    <h1>Soil Analysis Results</h1>
-    <h2>Soil Grade: {{ grade }} (0-2)</h2>
-    
-    <div>
-        {{ graph_html|safe }}
+    <div class="content-container">
+        <h1>Soil Analysis Results</h1>
+        <h2>Soil Grade: {{ grade }} (0-2)</h2>
+        
+        <div class="graph-section">
+            {{ graph_html|safe }}
+        </div>
+        
+        <h3>AI Suggestions</h3>
+        <ul>
+            {% for suggestion in suggestions %}
+                <li>{{ suggestion }}</li>
+            {% endfor %}
+        </ul>
+        
+        <div class="chat-container">
+            <div class="chat-header">Soil Assistant Chatbot</div>
+            <div class="chat-messages" id="chat-messages">
+                <p>Bot: Hello! Ask me about soil improvement or crop suggestions.</p>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Type your question...">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+        
+        <p><a href="{% url 'upload' %}">Analyze Another Sample</a></p>
     </div>
-    
-    <h3>AI Suggestions:</h3>
-    <ul>
-        {% for suggestion in suggestions %}
-            <li>{{ suggestion }}</li>
-        {% endfor %}
-    </ul>
-    
-    <a href="{% url 'upload' %}">Analyze Another Sample</a>
+
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const messagesDiv = document.getElementById('chat-messages');
+            messagesDiv.innerHTML += `<p>You: ${message}</p>`;
+            input.value = '';
+
+            const response = await fetch("{% url 'chatbot' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `message=${encodeURIComponent(message)}`
+            });
+            const data = await response.json();
+
+            messagesDiv.innerHTML += `<p>Bot: ${data.response}</p>`;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
 </body>
 </html>

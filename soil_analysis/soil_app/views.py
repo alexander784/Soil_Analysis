@@ -1,6 +1,5 @@
 from django.shortcuts import render
-
-# Create your views here.
+from django.http import JsonResponse
 from .forms import SoilUploadForm
 from .utils import analyze_soil_data, get_ai_suggestions
 
@@ -23,3 +22,26 @@ def upload_soil_data(request):
         form = SoilUploadForm()
     
     return render(request, 'soil_app/upload.html', {'form': form})
+
+def chatbot_response(request):
+    if request.method == 'POST':
+        user_message = request.POST.get('message', '').lower()
+        # Dummy nutrient levels for demo 
+        nutrient_levels = {'N': 75, 'P': 45, 'K': 120, 'pH': 6.5}
+        
+        # Simple rule-based responses
+        if 'nitrogen' in user_message:
+            response = f"Nitrogen level is {nutrient_levels['N']}. "
+            if nutrient_levels['N'] < 50:
+                response += "Consider adding nitrogen-rich fertilizer like urea."
+            else:
+                response += "Nitrogen levels are adequate."
+        elif 'crop' in user_message:
+            grade = 1 
+            response = "Based on current soil conditions, suitable crops include: "
+            response += "Wheat, barley, or soybeans" if grade == 1 else "Corn or vegetables"
+        else:
+            response = "I can help with soil improvement tips or crop suggestions. What would you like to know?"
+        
+        return JsonResponse({'response': response})
+    return JsonResponse({'response': 'Error: Invalid request'})
