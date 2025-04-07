@@ -1,14 +1,75 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Soil Analysis</title>
-</head>
-<body>
-    <h1>Upload Soil Data</h1>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Analyze</button>
-    </form>
-</body>
-</html>
+{% extends 'soil_app/base.html' %}
+
+{% block title %}Upload Soil Data{% endblock %}
+
+{% block content %}
+    <div class="content-container">
+        <h1 class="upload-header">Upload Soil Data</h1>
+        <form method="post" enctype="multipart/form-data" class="upload-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="submit-btn">Analyze</button>
+        </form>
+    </div>
+
+    <style>
+        .upload-header {
+            color: #2c3e50;
+            font-size: 2em;
+            font-weight: 500;
+            margin-bottom: 20px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #58e91f;
+        }
+
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+        }
+        .upload-form p {
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .upload-form label {
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 1em;
+        }
+        .upload-form input[type="file"] {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fafafa;
+            font-size: 0.9em;
+            color: #333;
+            transition: border-color 0.3s ease;
+        }
+        .upload-form input[type="file"]:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .submit-btn {
+            padding: 10px 25px;
+            background: #58e91f;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-weight: 500;
+            font-size: 1em;
+            cursor: pointer;
+            align-self: flex-end;
+            transition: background 0.3s ease;
+        }
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+    </style>
+{% endblock %}
