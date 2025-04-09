@@ -24,7 +24,7 @@ This is a Django-based web application for analyzing soil data, predicting soil 
 
 1. **Clone the Repository:**
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/alexander784/Soil_Analysis.git
    cd soil_analysis
 
 2. **Set Up a Virtual Environment:**
